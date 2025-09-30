@@ -14,7 +14,7 @@ const initialItems = [
 }
 
 html {
-  font-size: 8px;
+  font-size: 62.5%;
 }
 
 body {
@@ -88,7 +88,10 @@ input {
   gap: 3.2rem;
   align-items: center;
 }
-
+.add-form div {
+  display: flex;
+  gap: 1rem;
+}
 .actions button,
 .list select {
   text-transform: uppercase;
@@ -134,4 +137,32 @@ input[type="checkbox"] {
   text-align: center;
   font-weight: 700;
   padding: 3.2rem 0;
+}
+@media screen and (max-width: 1200px) {
+  html {
+    font-size: 55%;
+  }
+}
+@media screen and (max-width: 992px) {
+  html {
+    font-size: 50%;
+  }
+}
+@media screen and (max-width: 768px) {
+  html {
+    font-size: 45%;
+  }
+}
+@media screen and (max-width: 576px) {
+  html {
+    font-size: 40%;
+  }
+  .add-form {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  h1 {
+    font-size: 7rem;
+    word-spacing: 20px;
+  }
 }

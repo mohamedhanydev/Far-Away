@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 // const initialItems = [
 //   { id: 1, description: "Passports", quantity: 2, packed: false },
 //   { id: 2, description: "Socks", quantity: 12, packed: true },
@@ -54,7 +54,7 @@ export default function App() {
   );
 }
 function Logo() {
-  return <h1> Far Away</h1>;
+  return <h1>🎒 Far Away</h1>;
 }
 function Form({ items, onAddItems }) {
   const [description, setDescription] = useState("");
@@ -77,19 +77,21 @@ function Form({ items, onAddItems }) {
   return (
     <form className="add-form" onSubmit={handleSubmit}>
       <h3>What do you need for your trip ?</h3>
-      <select value={quantity} onChange={(e) => setQuantity(+e.target.value)}>
-        {Array.from({ length: 20 }, (_, i) => (
-          <option value={i + 1} key={i + 1}>
-            {i + 1}
-          </option>
-        ))}
-      </select>
-      <input
-        type="text"
-        placeholder="Item..."
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
+      <div>
+        <select value={quantity} onChange={(e) => setQuantity(+e.target.value)}>
+          {Array.from({ length: 20 }, (_, i) => (
+            <option value={i + 1} key={i + 1}>
+              {i + 1}
+            </option>
+          ))}
+        </select>
+        <input
+          type="text"
+          placeholder="Item..."
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+      </div>
       <button>Add</button>
     </form>
   );
