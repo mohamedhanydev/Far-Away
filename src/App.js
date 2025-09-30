@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // const initialItems = [
 //   { id: 1, description: "Passports", quantity: 2, packed: false },
 //   { id: 2, description: "Socks", quantity: 12, packed: true },
@@ -25,7 +25,7 @@ export default function App() {
   function handlePackItems(id) {
     const newItems = items.map((item) => {
       if (item.id === id) {
-        item.packed = !item.packed;
+        return { ...item, packed: !item.packed };
       }
       return item;
     });
@@ -40,7 +40,6 @@ export default function App() {
       return items.filter((item) => item.id !== id);
     });
   }
-
   return (
     <div className="app">
       <Logo />
@@ -95,11 +94,22 @@ function Form({ items, onAddItems }) {
     </form>
   );
 }
-function PackingList({ items, onDel, onPackItems }) {
+function PackingList({ items, onDel, onPackItems, onSort }) {
+  const [order, setOrder] = useState(0);
+  const sortedItems = [...items].sort((a, b) => {
+    if (order === 0) return a.id - b.id; // default order
+    if (order === 1) return a.description.localeCompare(b.description);
+    if (order === 2) return a.packed - b.packed;
+    return 0;
+  });
+
+  function handleOrder(e) {
+    setOrder(+e.target.value);
+  }
   return (
     <div className="list">
       <ul>
-        {items.map((item, i) => (
+        {sortedItems.map((item, i) => (
           <Item
             item={item}
             onPackItems={onPackItems}
@@ -109,8 +119,10 @@ function PackingList({ items, onDel, onPackItems }) {
         ))}
       </ul>
       <div className="actions">
-        <select>
-          <option value="">Sort By Description</option>
+        <select value={order} onChange={handleOrder}>
+          <option value={0}>Sort By Input Order</option>
+          <option value={1}>Sort By Description</option>
+          <option value={2}>Sort By Packed status</option>
         </select>
 
         <button onClick={() => onDel()}>Clear List</button>
