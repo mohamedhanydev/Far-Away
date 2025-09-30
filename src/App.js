@@ -1,48 +1,77 @@
 import { useState } from "react";
-const initialItems = [
-  { id: 1, description: "Passports", quantity: 2, packed: false },
-  { id: 2, description: "Socks", quantity: 12, packed: true },
-  { id: 3, description: "Passports", quantity: 2, packed: false },
-  { id: 4, description: "Socks", quantity: 12, packed: false },
-  { id: 5, description: "Passports", quantity: 2, packed: false },
-  { id: 6, description: "Socks", quantity: 12, packed: false },
-  { id: 7, description: "Passports", quantity: 2, packed: false },
-  { id: 8, description: "Socks", quantity: 12, packed: false },
-  { id: 9, description: "Passports", quantity: 2, packed: false },
-  { id: 10, description: "Socks", quantity: 12, packed: false },
-  { id: 11, description: "Passports", quantity: 2, packed: false },
-  { id: 12, description: "Socks", quantity: 12, packed: false },
-  { id: 13, description: "Passports", quantity: 2, packed: false },
-  { id: 14, description: "Socks", quantity: 12, packed: false },
-];
+// const initialItems = [
+//   { id: 1, description: "Passports", quantity: 2, packed: false },
+//   { id: 2, description: "Socks", quantity: 12, packed: true },
+//   { id: 3, description: "Passports", quantity: 2, packed: false },
+//   { id: 4, description: "Socks", quantity: 12, packed: false },
+//   { id: 5, description: "Passports", quantity: 2, packed: false },
+//   { id: 6, description: "Socks", quantity: 12, packed: false },
+//   { id: 7, description: "Passports", quantity: 2, packed: false },
+//   { id: 8, description: "Socks", quantity: 12, packed: false },
+//   { id: 9, description: "Passports", quantity: 2, packed: false },
+//   { id: 10, description: "Socks", quantity: 12, packed: false },
+//   { id: 11, description: "Passports", quantity: 2, packed: false },
+//   { id: 12, description: "Socks", quantity: 12, packed: false },
+//   { id: 13, description: "Passports", quantity: 2, packed: false },
+//   { id: 14, description: "Socks", quantity: 12, packed: false },
+// ];
 export default function App() {
+  const [items, setItems] = useState([]);
+  function handleAddItems(item) {
+    setItems((items) => {
+      return [...items, item];
+    });
+  }
+  function handlePackItems(id) {
+    const newItems = items.map((item) => {
+      if (item.id === id) {
+        item.packed = !item.packed;
+      }
+      return item;
+    });
+    setItems(newItems);
+  }
+  function handleDel(id = null) {
+    if (!id) {
+      setItems([]);
+      return;
+    }
+    setItems((items) => {
+      return items.filter((item) => item.id !== id);
+    });
+  }
+
   return (
     <div className="app">
       <Logo />
-      <Form />
-      <PackingList />
-      <Stats />
+      <Form items={items} onAddItems={handleAddItems} />
+      <PackingList
+        items={items}
+        onDel={handleDel}
+        onPackItems={handlePackItems}
+      />
+      <Stats items={items} />
     </div>
   );
 }
 function Logo() {
   return <h1> Far Away</h1>;
 }
-function Form() {
+function Form({ items, onAddItems }) {
   const [description, setDescription] = useState("");
   const [quantity, setQuantity] = useState(1);
 
-  // console.log(initialItems);
   function handleSubmit(e) {
     e.preventDefault();
     if (!description) return;
-    initialItems.push({
-      id: initialItems.at(-1).id + 1,
+    const item = {
+      id: items.length ? items.at(-1).id + 1 : 1,
       description: description,
       quantity: quantity,
       packed: false,
-    });
-    console.log(initialItems);
+    };
+    onAddItems(item);
+    // console.log(initialItems);
     setDescription("");
     setQuantity(1);
   }
@@ -66,43 +95,61 @@ function Form() {
     </form>
   );
 }
-function PackingList() {
+function PackingList({ items, onDel, onPackItems }) {
   return (
     <div className="list">
       <ul>
-        {initialItems.map((item, i) => (
-          <Item item={item} key={item.id} />
+        {items.map((item, i) => (
+          <Item
+            item={item}
+            onPackItems={onPackItems}
+            key={item.id}
+            onDel={onDel}
+          />
         ))}
       </ul>
+      <div className="actions">
+        <select>
+          <option value="">Sort By Description</option>
+        </select>
+
+        <button onClick={() => onDel()}>Clear List</button>
+      </div>
     </div>
   );
 }
-function Item({ item }) {
-  const [packed, setPacked] = useState(item.packed);
-  function handleDel() {}
+function Item({ item, onPackItems, onDel }) {
   return (
     <li key={item.id}>
       <input
         type="checkbox"
         name="item"
         id={item.id}
-        onChange={() => setPacked((p) => !p)}
-        checked={packed}
+        checked={item.packed}
+        onChange={() => onPackItems(item.id)}
       />
-      <span style={packed ? { textDecoration: "line-through" } : {}}>
+      <span style={item.packed ? { textDecoration: "line-through" } : {}}>
         {item.quantity} {item.description}
       </span>
 
-      <button style={{ color: "red" }} onClick={handleDel}>
+      <button style={{ color: "red" }} onClick={() => onDel(item.id)}>
         ❌
       </button>
     </li>
   );
 }
-function Stats() {
+function Stats({ items }) {
+  const packed = items.filter((item) => item.packed).length;
   return (
     <footer className="stats">
-      <em>You have X itmes on your list and you are already packed X</em>
+      {items.length ? (
+        <em>
+          You have {items.length} itmes on your list and you are already packed{" "}
+          {packed} ({((packed / items.length) * 100).toFixed(0)}%)
+        </em>
+      ) : (
+        <em>Start adding items to the packing list</em>
+      )}
     </footer>
   );
 }
