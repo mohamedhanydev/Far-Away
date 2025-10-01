@@ -153,13 +153,17 @@ function Item({ item, onPackItems, onDel }) {
   );
 }
 function Stats({ items }) {
+  if (!items.length)
+    return (
+      <footer className="stats">
+        <em>Start adding items to the packing list</em>
+      </footer>
+    );
   const packed = items.filter((item) => item.packed).length;
   const percentage = Math.round((packed / items.length) * 100);
   return (
     <footer className="stats">
-      {!items.length ? (
-        <em>Start adding items to the packing list</em>
-      ) : percentage == 100 ? (
+      {percentage === 100 ? (
         "You Are Ready To Go!"
       ) : (
         <em>
