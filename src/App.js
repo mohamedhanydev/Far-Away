@@ -33,7 +33,10 @@ export default function App() {
   }
   function handleDel(id = null) {
     if (!id) {
-      setItems([]);
+      const confirmed = window.confirm(
+        "Are you sure you want to delete all items?"
+      );
+      confirmed && setItems([]);
       return;
     }
     setItems((items) => {
@@ -96,7 +99,7 @@ function Form({ items, onAddItems }) {
     </form>
   );
 }
-function PackingList({ items, onDel, onPackItems, onSort }) {
+function PackingList({ items, onDel, onPackItems }) {
   const [order, setOrder] = useState(0);
   const sortedItems = [...items].sort((a, b) => {
     if (order === 0) return a.id - b.id; // default order
